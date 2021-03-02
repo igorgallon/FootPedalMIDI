@@ -46,7 +46,7 @@ typedef struct MUX_Context
 } MUX_Context;
 
 // Initialize essential pins from 74HC4067
-void MUX_Initialize(int commonIO, int s0, int s1, int s2, int s3);
+void MUX_Initialize(int commonIO, int enable, int s0, int s1, int s2, int s3);
 
 // Select channel on 74HC4067
 void MUX_SelectChannel(int channel);

@@ -11,25 +11,25 @@ static MUX_Context context;
 
 // Control pins output table (See TI 74HC4067 data sheet)
 const int muxChannel[MUX_CHANNELS_AMOUNT][4] = {
-    {0,0,0,0}, // Channel 0
-    {1,0,0,0}, // Channel 1
-    {0,1,0,0}, // Channel 2
-    {1,1,0,0}, // Channel 3
-    {0,0,1,0}, // Channel 4
-    {1,0,1,0}, // Channel 5
-    {0,1,1,0}, // Channel 6
-    {1,1,1,0}, // Channel 7
-    {0,0,0,1}, // Channel 8
-    {1,0,0,1}, // Channel 9
-    {0,1,0,1}, // Channel 10
-    {1,1,0,1}, // Channel 11
-    {0,0,1,1}, // Channel 12
-    {1,0,1,1}, // Channel 13
-    {0,1,1,1}, // Channel 14
-    {1,1,1,1}  // Channel 15
+    {LOW,LOW,LOW,LOW}, // Channel 0
+    {HIGH,LOW,LOW,LOW}, // Channel 1
+    {LOW,HIGH,LOW,LOW}, // Channel 2
+    {HIGH,HIGH,LOW,LOW}, // Channel 3
+    {LOW,LOW,HIGH,LOW}, // Channel 4
+    {HIGH,LOW,HIGH,LOW}, // Channel 5
+    {LOW,HIGH,HIGH,LOW}, // Channel 6
+    {HIGH,HIGH,HIGH,LOW}, // Channel 7
+    {LOW,LOW,LOW,HIGH}, // Channel 8
+    {HIGH,LOW,LOW,HIGH}, // Channel 9
+    {LOW,HIGH,LOW,HIGH}, // Channel 10
+    {HIGH,HIGH,LOW,HIGH}, // Channel 11
+    {LOW,LOW,HIGH,HIGH}, // Channel 12
+    {HIGH,LOW,HIGH,HIGH}, // Channel 13
+    {LOW,HIGH,HIGH,HIGH}, // Channel 14
+    {HIGH,HIGH,HIGH,HIGH}  // Channel 15
 };
 
-void MUX_Initialize(int commonIO, int s0, int s1, int s2, int s3)
+void MUX_Initialize(int commonIO, int enable, int s0, int s1, int s2, int s3)
 {
     memset(&context, 0x00, sizeof(context));
     context.commonIO = commonIO;
@@ -39,12 +39,13 @@ void MUX_Initialize(int commonIO, int s0, int s1, int s2, int s3)
     context.s3 = s3;
 
     pinMode(commonIO, OUTPUT);
-
+    pinMode(enable, OUTPUT);
     pinMode(s0, OUTPUT);
     pinMode(s1, OUTPUT);
     pinMode(s2, OUTPUT);
     pinMode(s3, OUTPUT);
     
+    digitalWrite(enable, LOW);
     digitalWrite(s0, LOW);
     digitalWrite(s1, LOW);
     digitalWrite(s2, LOW);
@@ -70,14 +71,14 @@ void MUX_GetAllChannels(bool *pinValues)
     //     // Read the value on that channel and store in array
     //     pinValues[i] = digitalRead(context.commonIO);
     // }
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 6; i++)
     {
         // Choose a channel on the 74HC4067
         MUX_SelectChannel(i);
         // Read the value on that channel and store in array
         digitalWrite(context.commonIO, HIGH);
-        delay(1000);
+        delay(250);
         digitalWrite(context.commonIO, LOW);
-        delay(500);
-    } 
+        delay(250);
+    }
 }
