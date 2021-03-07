@@ -1,0 +1,116 @@
+/*
+ * MIDI.h
+ *
+ *  Created on: 03/03/2021
+ *      Author: Igor Gallon
+ * 
+ * MIDI Messages Controller
+ */
+
+#include <Arduino.h>
+
+class MIDI
+{
+    public:
+        enum Command
+        {
+            NoteOff         = 0x80,
+            NoteOn          = 0x90,
+            Controller      = 0xB0,
+            ProgramChange   = 0xC0,
+            SystemMessage   = 0xF0
+        };
+
+        // Specify the Controller (0xB0) command
+        enum ControllerNumber
+        {
+            BankMSB         = 0x00,
+            BankLSB         = 0x20,
+            VolumeLevel     = 0x07,
+            SustainPedal    = 0x40,
+        };
+
+        enum SustainValue
+        {
+            SustainOff      = 0x00,
+            SustainOn       = 0x20
+        };
+
+        enum Pitch
+        {
+            NoPitch = 0x00,
+            C2      = 0x24,     // Do2
+            C2S     = 0x25,     // Do#/Reb
+            D2      = 0x26,     // Re
+            D2S     = 0x27,     // Re#/Mib
+            E2      = 0x28,     // Mi
+            F2      = 0x29,     // Fa
+            F2S     = 0x2A,     // Fa#/Solb
+            G2      = 0x2B,     // Sol
+            G2S     = 0x2C,     // Sol#/Lab
+            A2      = 0x2D,     // La
+            A2S     = 0x2E,     // La#/Sib
+            B2      = 0x2F,     // Si
+            C3      = 0x30      // Do3
+        };
+
+        enum Voices
+        {
+            GrandPiano          = 0x00,
+            BrightPiano         = 0x01,
+            ElectricGrandPiano  = 0x02,
+            HonkyTonkPiano      = 0x03,
+            ElectricPiano1      = 0x04,
+            ElectricPiano2      = 0x05,
+            Harpischord         = 0x06,
+            Clavi               = 0x07,
+            DrawbarOrgan        = 0x10,
+            PercussiveOrgan     = 0x11,
+            RockOrgan           = 0x12,
+            ChurchOrgan         = 0x13,
+            ReedOrgan           = 0x14
+        };
+        
+        enum Volume
+        {
+            Vol4p = 0x08,
+            Vol3p = 0x14,
+            Vol2p = 0x1F,
+            Vol1p = 0x2A,
+            Volmp = 0x35,
+            Volmf = 0x40,
+            Volf  = 0x50,
+            Vol2f = 0x60,
+            Vol3f = 0x70,
+            Vol4f = 0x7F
+        };
+
+        enum Harmony
+        {
+            Monophonic,
+            Polyphonic
+        };
+
+        // Constructor
+        MIDI();
+        void initialize();
+        void setChannel(int channel);
+        void setInstrument(int instrument);
+        void setVolume(int volume);
+        void setSustain(bool sustain);
+        void setHarmonyMode(Harmony mode);
+
+        void playNote(Pitch pitch);
+        void stopNote(Pitch pitch);
+
+    private:
+        const int BAUD_RATE = 31250;
+        
+        int Channel = 0;
+        int Instrument;
+        int Volume;
+        int Sustain;
+        int HarmonyMode;
+
+        Pitch LastPlayedPitch = NoPitch;
+};
