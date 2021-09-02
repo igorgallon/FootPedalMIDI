@@ -14,7 +14,7 @@ MIDI::MIDI()
     Instrument  = GrandPiano;
     Volume      = Volmf;   
     Sustain     = true;
-    HarmonyMode = Polyphonic;
+    HarmonyMode = Monophonic;
 }
 
 void MIDI::initialize()
@@ -22,8 +22,10 @@ void MIDI::initialize()
     // Initialize Serial Communication using
     // Baud Rate specified by MIDI protocol
     Serial.begin(BAUD_RATE);
+    
+    for(int i = 0; i < 13; i++)
+        PlayingNote[i] = false;
 } 
-
 
 void MIDI::setChannel(int channel)
 {
@@ -86,27 +88,44 @@ void MIDI::setHarmonyMode(Harmony mode)
     HarmonyMode = mode;
 }
 
-void MIDI::playNote(Pitch pitch)
+void MIDI::playNote(int index)
 {
+    Pitch pitch = Notes[index];
+
     if(pitch >= C2 && pitch <= C3)
     {
         if(HarmonyMode == Monophonic && LastPlayedPitch != NoPitch)
             stopNote(LastPlayedPitch);
 
-        Serial.write(NoteOn|Channel);
-        Serial.write(pitch);
-        Serial.write(Volume);
+        if(!PlayingNote[index])
+        {
+            // Serial.print("Play note: ");
+            // Serial.println(NotesName[index]);
+            Serial.write(NoteOn|Channel);
+            Serial.write(pitch);
+            Serial.write(Volume);
+            LastPlayedPitch = pitch;
 
-        LastPlayedPitch = pitch;
+            PlayingNote[index] = true;
+        }
     }
 }
 
-void MIDI::stopNote(Pitch pitch)
+void MIDI::stopNote(int index)
 {
+    Pitch pitch = Notes[index];
+
     if(pitch >= C2 && pitch <= C3)
     {
-        Serial.write(NoteOff|Channel);
-        Serial.write(pitch);
-        Serial.write(Volume);
+        if(PlayingNote[index])
+        {
+            // Serial.print("Stop note: ");
+            // Serial.println(NotesName[index]);
+
+            Serial.write(NoteOff|Channel);
+            Serial.write(pitch);
+            Serial.write(Volume);
+            PlayingNote[index] = false;
+        }
     }
 }

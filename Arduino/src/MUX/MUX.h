@@ -15,18 +15,17 @@
 class MUX
 {
     public:
-    // Constructor
-    MUX();
-    // Initialize essential pins from 74HC4067
-    void initialize(int commonIO, int enable, int s0, int s1, int s2, int s3);
-    // Select channel on 74HC4067
-    void selectChannel(int channel);
-    // Get current value from all Pins and return in <channelValues> array
-    void getAllChannels(bool *channelValues, int length);
+        // Constructor
+        MUX();
+        // Initialize essential pins from 74HC4067
+        void initialize(int commonIO, int s0, int s1, int s2, int s3);
+        // Select channel on 74HC4067
+        void selectChannel(int channel);
+        // Get current value from all Pins and return in <channelValues> array
+        void getAllChannels(bool *channelValues, int length);
 
     private:
         int CommonIO;       // Common I/O pin
-        int EnablePin;      // Enable pin
         int S0, S1, S2, S3; // Selector pins
 
         const int CHANNELS_AMOUNT = 16;
@@ -41,11 +40,11 @@ class MUX
             {1,0,1,0}, // Channel 5
             {0,1,1,0}, // Channel 6
             {1,1,1,0}, // Channel 7
-            {0,0,0,1}, // Channel 8
-            {1,0,0,1}, // Channel 9
-            {0,1,0,1}, // Channel 10
-            {1,1,0,1}, // Channel 11
             {0,0,1,1}, // Channel 12
+            {1,1,0,1}, // Channel 11
+            {0,1,0,1}, // Channel 10
+            {1,0,0,1}, // Channel 9
+            {0,0,0,1}, // Channel 8
             {1,0,1,1}, // Channel 13
             {0,1,1,1}, // Channel 14
             {1,1,1,1}  // Channel 15

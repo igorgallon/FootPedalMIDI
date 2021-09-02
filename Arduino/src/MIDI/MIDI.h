@@ -12,6 +12,7 @@
 class MIDI
 {
     public:
+        const int MIDI_KEYS_AMOUNT = 13;
         enum Command
         {
             NoteOff         = 0x80,
@@ -91,6 +92,12 @@ class MIDI
             Polyphonic
         };
 
+        const Pitch Notes[13] = { C2, C2S, D2, D2S, E2, F2, F2S, G2, G2S, A2, A2S, B2, C3 };
+        
+        const char* NotesName[13] = { "Do2", "Do2#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si", "Do3" };
+
+        bool PlayingNote[13] = { 0 };
+
         // Constructor
         MIDI();
         void initialize();
@@ -100,8 +107,8 @@ class MIDI
         void setSustain(bool sustain);
         void setHarmonyMode(Harmony mode);
 
-        void playNote(Pitch pitch);
-        void stopNote(Pitch pitch);
+        void playNote(int index);
+        void stopNote(int index);
 
     private:
         const int BAUD_RATE = 31250;
