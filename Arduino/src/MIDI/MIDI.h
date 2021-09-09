@@ -7,6 +7,9 @@
  * MIDI Messages Controller
  */
 
+#ifndef MIDI_H
+#define MIDI_H
+
 #include <Arduino.h>
 
 class MIDI
@@ -72,20 +75,39 @@ class MIDI
             ReedOrgan           = 0x14
         };
         
-        enum Volume
+        enum VolumeLevels
         {
-            Vol4p = 0x08,
-            Vol3p = 0x14,
-            Vol2p = 0x1F,
-            Vol1p = 0x2A,
-            Volmp = 0x35,
-            Volmf = 0x40,
-            Volf  = 0x50,
-            Vol2f = 0x60,
-            Vol3f = 0x70,
-            Vol4f = 0x7F
+            Vol4p,
+            Vol3p,
+            Vol2p,
+            Vol1p,
+            Volmp,
+            Volmf,
+            Volf ,
+            Vol2f,
+            Vol3f,
+            Vol4f
         };
 
+        typedef struct
+        {
+            VolumeLevels volume;
+            int value; 
+        } Volume;
+
+        const Volume Volumes [10] = { 
+            {Vol4p, 0x08},
+            {Vol3p, 0x14},
+            {Vol2p, 0x1F},
+            {Vol1p, 0x2A},
+            {Volmp, 0x35},
+            {Volmf, 0x40},
+            {Volf,  0x50},
+            {Vol2f, 0x60},
+            {Vol3f, 0x70},
+            {Vol4f, 0x7F}
+        };
+        
         enum Harmony
         {
             Monophonic,
@@ -103,8 +125,10 @@ class MIDI
         void initialize();
         void setChannel(int channel);
         void setInstrument(int instrument);
-        void setVolume(int volume);
-        void setSustain(bool sustain);
+        void setVolume(VolumeLevels volume);
+        void increaseVolume();
+        void decreaseVolume();
+        void setSustain();
         void setHarmonyMode(Harmony mode);
 
         void playNote(int index);
@@ -115,9 +139,11 @@ class MIDI
         
         int Channel = 0;
         int Instrument;
-        int Volume;
-        int Sustain;
+        int VolumeIndex;
+        bool IsSustainEnable;
         int HarmonyMode;
 
         Pitch LastPlayedPitch = NoPitch;
 };
+
+#endif

@@ -5,16 +5,11 @@
  *      Author: Igor Gallon
  */
 
-#include <Arduino.h>
 #include <MIDI/MIDI.h>
 
 MIDI::MIDI()
 {
-    Channel     = 0;
-    Instrument  = GrandPiano;
-    Volume      = Volmf;   
-    Sustain     = true;
-    HarmonyMode = Monophonic;
+    // Do nothing
 }
 
 void MIDI::initialize()
@@ -25,6 +20,14 @@ void MIDI::initialize()
     
     for(int i = 0; i < 13; i++)
         PlayingNote[i] = false;
+
+    // Set to default configurations
+    IsSustainEnable = true;
+    setChannel(0);
+    setInstrument(DrawbarOrgan);
+    setVolume(Vol4f);
+    setHarmonyMode(Monophonic);
+    setSustain();
 } 
 
 void MIDI::setChannel(int channel)
@@ -58,29 +61,55 @@ void MIDI::setInstrument(int instrument)
     }
 }
 
-void MIDI::setVolume(int volume)
+void MIDI::setVolume(VolumeLevels volume)
 {
     if(volume >= Vol4p && volume <= Vol4f)
     {
-        Volume = volume;
+        VolumeIndex = volume;
 
         Serial.write(Controller|Channel);
         Serial.write(VolumeLevel);
-        Serial.write(Volume);
+        Serial.write(Volumes[VolumeIndex].value);
     }
 }
 
-void MIDI::setSustain(bool sustain)
+void MIDI::increaseVolume()
 {
-    if(sustain)
-        Sustain = SustainOn;
+    int newVolume = 0;
+
+    if(VolumeIndex < Vol4f)
+    {
+        newVolume = VolumeIndex + 1;
+        setVolume((MIDI::VolumeLevels)newVolume);
+    }
+}
+
+void MIDI::decreaseVolume()
+{
+    int newVolume = 0;
+
+    if(VolumeIndex > Vol4p)
+    {
+        newVolume = VolumeIndex - 1;
+        setVolume((MIDI::VolumeLevels)newVolume);
+    }
+}
+
+void MIDI::setSustain()
+{
+    SustainValue sustainVal;
+
+    IsSustainEnable = !IsSustainEnable;
+
+    if(IsSustainEnable)
+        sustainVal = SustainOn;
     else
-        Sustain = SustainOff;
+        sustainVal = SustainOff;
 
     // Send Controller Message
     Serial.write(Controller|Channel);
     Serial.write(SustainPedal);
-    Serial.write(Sustain);
+    Serial.write(sustainVal);
 }
 
 void MIDI::setHarmonyMode(Harmony mode)
@@ -103,7 +132,7 @@ void MIDI::playNote(int index)
             // Serial.println(NotesName[index]);
             Serial.write(NoteOn|Channel);
             Serial.write(pitch);
-            Serial.write(Volume);
+            Serial.write(Volumes[VolumeIndex].value);
             LastPlayedPitch = pitch;
 
             PlayingNote[index] = true;
@@ -119,12 +148,9 @@ void MIDI::stopNote(int index)
     {
         if(PlayingNote[index])
         {
-            // Serial.print("Stop note: ");
-            // Serial.println(NotesName[index]);
-
             Serial.write(NoteOff|Channel);
             Serial.write(pitch);
-            Serial.write(Volume);
+            Serial.write(Volumes[VolumeIndex].value);
             PlayingNote[index] = false;
         }
     }

@@ -10,6 +10,9 @@
  * Connect 74HC4067 pin 1 to Arduino D3
  */
 
+#ifndef MUX_H
+#define MUX_H
+
 #include <Arduino.h>
 
 class MUX
@@ -50,3 +53,5 @@ class MUX
             {1,1,1,1}  // Channel 15
         };
 };
+
+#endif
