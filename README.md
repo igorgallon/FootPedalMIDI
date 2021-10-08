@@ -1,2 +1,2 @@
 # FootPedalMIDI
-A MIDI Foot Pedal for Organs and Keyboards
+A simple MIDI Foot Pedal controller for Organs and Keyboards
